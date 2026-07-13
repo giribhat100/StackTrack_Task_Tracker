@@ -17,8 +17,16 @@ namespace StackTrack.Helpers
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
-
+        /// <summary>
+        /// Function to validate the command action
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
         public bool CanExecute(object parameter) => _canExecute == null || _canExecute(parameter);
+        /// <summary>
+        /// Function to execute the command
+        /// </summary>
+        /// <param name="parameter"></param>
         public void Execute(object parameter) => _execute(parameter);
         public event EventHandler CanExecuteChanged
         {

@@ -101,6 +101,11 @@ namespace StackTrack.ViewModel
         
 
         #region Methods
+        /// <summary>
+        /// Function to apply fileter
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         private bool FilterTaskPredicate(object obj)
         {
             if (obj is TaskDto task)
@@ -122,6 +127,10 @@ namespace StackTrack.ViewModel
         }
 
         private bool CanAddTask(object obj) => !string.IsNullOrWhiteSpace(NewTaskTitle);
+        /// <summary>
+        /// Functon to add a new task to the list and save it to the file
+        /// </summary>
+        /// <param name="obj"></param>
         private void AddTask(object obj)
         {
             Tasks.Add(new TaskDto
@@ -136,7 +145,10 @@ namespace StackTrack.ViewModel
         }
 
         private bool CanModifyTask(object obj) => SelectedTask != null;
-
+        /// <summary>
+        /// Function to change the task state
+        /// </summary>
+        /// <param name="obj"></param>
         private void ToggleComplete(object obj)
         {
             if (SelectedTask != null)
@@ -146,7 +158,10 @@ namespace StackTrack.ViewModel
                 SaveTasks();
             }
         }
-
+        /// <summary>
+        /// Function to delete the task
+        /// </summary>
+        /// <param name="obj"></param>
         private void DeleteTask(object obj)
         {
             if (SelectedTask != null)
@@ -155,7 +170,9 @@ namespace StackTrack.ViewModel
                 SaveTasks();
             }
         }
-
+        /// <summary>
+        /// Function to load the task
+        /// </summary>
         private async void LoadTasks()
         {
             try
@@ -173,7 +190,9 @@ namespace StackTrack.ViewModel
                 Tasks = new ObservableCollection<TaskDto>();
             }
         }
-
+        /// <summary>
+        /// Function to save the task
+        /// </summary>
         private async void SaveTasks()
         {
             try
@@ -192,7 +211,10 @@ namespace StackTrack.ViewModel
                 window.Close();
             }
         }
-
+        /// <summary>
+        /// Function to mimize the window
+        /// </summary>
+        /// <param name="obj"></param>
         private void MinimizeWindow(object obj)
         {
             if (obj is System.Windows.Window window)
