@@ -1,0 +1,191 @@
+﻿<Window x:Class="StackTrack.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:StackTrack.ViewModel"
+        xmlns:local="clr-namespace:StackTrack"
+        mc:Ignorable="d"
+        x:Name="MainWindowShell" 
+        Title="StackTrack Dashboard" Height="700" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/StyleSheet.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Border Background="{StaticResource GlassBackgroundMesh}" CornerRadius="16" BorderBrush="#33FFFFFF" BorderThickness="1">
+        <Grid Margin="25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,20" Background="Transparent" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="📋 TASK DASHBOARD" Foreground="White" FontSize="22" FontWeight="Bold" VerticalAlignment="Center"/>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+
+                    <Grid Width="300" Margin="0,0,15,0" VerticalAlignment="Center">
+                        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                                 Style="{StaticResource GlassTextBoxStyle}" 
+                                 Padding="30,8,10,8" />
+                        <TextBlock Text="🔍 Search tasks..." Foreground="White" Opacity="0.4" IsHitTestVisible="False" VerticalAlignment="Center" Margin="10,0,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SearchText}" Value="">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SearchText}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+\
+                    <Button Content="—" Command="{Binding MinimizeWindowCommand}"  CommandParameter="{Binding ElementName=MainWindowShell}" Width="36" Height="36" Style="{StaticResource GlassButtonStyle}" Background="Transparent" Foreground="White" FontSize="14" FontWeight="Bold" Margin="0,0,5,0" Padding="0,0,0,4"/>
+                    <Button Content="✕" Command="{Binding CloseWindowCommand}"  CommandParameter="{Binding ElementName=MainWindowShell}" Width="36" Height="36" Style="{StaticResource GlassButtonStyle}" Background="#22EF4444" Foreground="#F87171" BorderBrush="#44EF4444" FontSize="14" FontWeight="Bold"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="320"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Margin="0,0,15,0" CornerRadius="15" Background="{StaticResource GlassPanelBackground}" BorderBrush="{StaticResource GlassPanelBorder}" BorderThickness="1" Effect="{StaticResource GlassPanelShadow}">
+                    <StackPanel Margin="20">
+                        <TextBlock Text="➕ CREATE NEW TASK" Foreground="#A5B4FC" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,15" />
+
+                        <TextBlock Text="Task Description" Foreground="White" Opacity="0.7" FontSize="11" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding NewTaskTitle, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource GlassTextBoxStyle}"/>
+
+                        <TextBlock Text="Priority Tier" Foreground="White" Opacity="0.7" FontSize="11" Margin="0,15,0,5"/>
+                        <ComboBox ItemsSource="{Binding Priorities}" SelectedItem="{Binding SelectedPriority}" Style="{StaticResource GlassComboBoxStyle}"/>
+
+                        <Button Command="{Binding AddTaskCommand}" Content="+ Add To Board" Style="{StaticResource GlassButtonStyle}" Background="{StaticResource AccentIndigo}" Foreground="White" Margin="0,25,0,0" Height="40" />
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Column="1" Margin="15,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Filter Strip Configuration -->
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                        <TextBlock Text="🔍 Filters :" Foreground="White" VerticalAlignment="Center" Margin="0,0,10,0" Opacity="0.8"/>
+                        <ListBox ItemsSource="{Binding Filters}" SelectedItem="{Binding SelectedFilter}" Background="Transparent" BorderThickness="0">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource GlassFilterItemStyle}"/>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </StackPanel>
+
+                    <!-- Task Board Item Matrix -->
+                    <Border Grid.Row="1" CornerRadius="15" Background="{StaticResource GlassPanelBackground}" BorderBrush="{StaticResource GlassPanelBorder}" BorderThickness="1" Padding="10">
+                        <ListBox ItemsSource="{Binding FilteredTasks}" SelectedItem="{Binding SelectedTask}" Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem" BasedOn="{StaticResource GlassBoardRowStyle}"/>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="5" Width="Auto">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="80"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Status Indicator Visual Dot -->
+                                        <Ellipse Grid.Column="0" Width="12" Height="12" Margin="5,0,15,0" VerticalAlignment="Center">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="#475569"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                            <Setter Property="Fill" Value="{StaticResource AccentEmerald}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+
+                                        <!-- Task Title Segment -->
+                                        <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="14" FontWeight="SemiBold" TextWrapping="Wrap" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+                                                            <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <!-- Dynamic Contextual Priority Badge Pill -->
+                                        <Border Grid.Column="2" Padding="8,4" CornerRadius="10" VerticalAlignment="Center">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Priority}" Value="High">
+                                                            <Setter Property="Background" Value="{StaticResource AccentRose}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Priority}" Value="Medium">
+                                                            <Setter Property="Background" Value="{StaticResource AccentAmber}"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Priority}" Value="Low">
+                                                            <Setter Property="Background" Value="{StaticResource AccentBlue}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding Priority}" Foreground="White" FontSize="10" FontWeight="Bold"/>
+                                        </Border>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                        <Button Command="{Binding ToggleCompleteCommand}" Content="✓ Toggle Status" Style="{StaticResource GlassButtonStyle}" Background="{StaticResource AccentEmerald}" Foreground="White" Width="130" Height="36" Margin="0,0,10,0" />
+                        <Button Command="{Binding DeleteTaskCommand}" Content="🗑 Delete Task" Style="{StaticResource GlassButtonStyle}" Background="{StaticResource AccentRose}" Foreground="White" Width="120" Height="36" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
