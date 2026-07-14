@@ -16,7 +16,7 @@ This document outlines the core architectural and implementation decisions made 
 *   **Reason:** Custom chrome setups require a mechanism to shut down application processes since the operating system close box is stripped. Traditional implementations fallback to view-layer handlers (`CloseButton_Click` in `MainWindow.xaml.cs`), breaking pure MVVM architectures.
 *   **Impact:** **Simplicity & Cleanliness.** Completely flattens and purges the View's code-behind file to nothing but its construction blueprint (`InitializeComponent()`), honoring strict separation of concerns.
 
-### 4. Collection Management & Filtering Strategy (ICollectionView over Linq Remapping)
+### 3. Collection Management & Filtering Strategy (ICollectionView over Linq Remapping)
 *   **Decision:** Leveraging WPF's native infrastructure tracking system `ICollectionView` (`CollectionViewSource.GetDefaultView`) coupled with dynamic predicate handlers (`FilteredTasks.Filter = FilterTaskPredicate`) to process "All", "Pending", and "Completed" filters.
 *   **Reason:** Alternative approaches create separate arrays or clear/re-populate standard `ObservableCollection` lists on every toggle event, which destroys reference points, tracking integrity, and causes UI stuttering.
 *   **Impact:** **Performance & Responsiveness.** Re-filtering happens live within memory pipelines without resetting layout elements or rebuilding underlying item bindings. The performance profile remains flat even under higher data-density tracking conditions.
@@ -24,9 +24,8 @@ This document outlines the core architectural and implementation decisions made 
 ## Technology 
 
 *   **Framework:** .NET Core / WPF (Windows Presentation Foundation)
-*   **Language:** C# 10+
+*   **Language:** C# 
 *   **Data Layout:** XAML with custom `ControlTemplates`
-*   **Serialization:** System.Text.Json
 *   **Async Operations:** Task-based Asynchronous Pattern (TAP)
 
 
@@ -36,4 +35,4 @@ This document outlines the core architectural and implementation decisions made 
 2. Open the solution layout folder within **Visual Studio 2022** (or JetBrains Rider).
 3. Validate that your targeting compiler profile matches `.NET 4.8` or higher SDK dependencies.
 4. Build the workspace configuration (`Ctrl + Shift + B`).
-5. Execute or Debug the runtime bundle (`F5`). Your persistent cache instance (`tasks.json`) will initialize automatically on compilation path vectors.
+5. Execute or Debug the runtime bundle (`F5`).
